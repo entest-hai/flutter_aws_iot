@@ -1,13 +1,15 @@
-import 'package:flutter_aws_iot/MQTTEvent.dart';
-import 'package:flutter_aws_iot/MQTTRepository.dart';
-import 'package:flutter_aws_iot/MQTTState.dart';
+import 'package:flutter_aws_iot/bloc/MQTTEvent.dart';
+import 'package:flutter_aws_iot/repository/MQTTRepository.dart';
+import 'package:flutter_aws_iot/bloc/MQTTState.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 
 class MQTTBloc extends Bloc<MQTTEvent, MQTTState> {
   List<String> currentMessages = [""];
-  final repostiory = MQTTClientRepository();
-  MQTTBloc() : super(MQTTDisconnected());
+
+  final MQTTClientRepository repository;
+  MQTTBloc({required this.repository}) : super(MQTTDisconnected());
+
   @override
   Stream<MQTTState> mapEventToState(MQTTEvent event) async* {
     // Try to connect to AWS IoT core
@@ -15,9 +17,12 @@ class MQTTBloc extends Bloc<MQTTEvent, MQTTState> {
       yield MQTTConnecting();
       try {
         print("trying to connect to AWS IoT core \($event.clientId)");
-        await repostiory.mqttConnect("testDevice");
+        await this.repository.mqttConnect("testDevice");
         emit(MQTTConnected(messages: currentMessages));
-        repostiory.client.updates!
+        this
+            .repository
+            .client
+            .updates!
             .listen((List<MqttReceivedMessage<MqttMessage>> c) {
           final recMess = c[0].payload as MqttPublishMessage;
           final pt =
@@ -32,7 +37,7 @@ class MQTTBloc extends Bloc<MQTTEvent, MQTTState> {
     // Try to disconnect
     if (event is MQTTDisconnect) {
       print("disconnecting to AWS IoT Core");
-      repostiory.disconnect();
+      this.repository.disconnect();
       yield (MQTTDisconnected());
     }
   }
