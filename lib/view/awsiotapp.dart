@@ -4,6 +4,7 @@ import 'package:flutter_aws_iot/bloc/MQTTEvent.dart';
 import 'package:flutter_aws_iot/bloc/MQTTState.dart';
 import 'package:flutter_aws_iot/repository/MQTTRepository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mqtt_client/mqtt_client.dart';
 
 class AWSIoTApp extends StatelessWidget {
   @override
@@ -56,10 +57,11 @@ class _MQTTClientState extends State<MQTTClient> {
               children: [
                 connectButton(),
                 if (state is MQTTConnecting) CircularProgressIndicator(),
-                // if (state is MQTTConnected) listMessages(state.messages)
                 if (state is MQTTConnected)
-                  streamMessages(
-                      context.read<MQTTClientRepository>().client.updates!)
+                  listMessages(context.read<MQTTClientRepository>().messages)
+                // if (state is MQTTConnected)
+                //   streamMessages(
+                //       context.read<MQTTClientRepository>().client.updates!)
               ],
             );
           },
@@ -70,8 +72,19 @@ class _MQTTClientState extends State<MQTTClient> {
   Widget streamMessages(Stream stream) {
     return StreamBuilder(
       stream: stream,
-      builder: (context, snapshop) {
-        return Text(("data"));
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Text("Connected");
+        } else {
+          final mqttReceivedMessages =
+              snapshot.data as List<MqttReceivedMessage<MqttMessage?>>?;
+          final recMess =
+              mqttReceivedMessages![0].payload as MqttPublishMessage;
+          final pt =
+              MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+
+          return Text("${mqttReceivedMessages.length}");
+        }
       },
     );
   }

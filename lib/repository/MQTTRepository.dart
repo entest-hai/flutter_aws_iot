@@ -7,6 +7,8 @@ class MQTTClientRepository {
   final MqttServerClient client = MqttServerClient(
       'a209xbcpyxq5au-ats.iot.ap-southeast-1.amazonaws.com', '');
 
+  List<String> messages = [];
+
   Future<bool> mqttConnect(String uniqueId) async {
     // topic
     const topic = 'slider';
@@ -42,6 +44,9 @@ class MQTTClientRepository {
     }
     // subscribe to a topic
     client.subscribe(topic, MqttQos.atMostOnce);
+    // stream data
+    getDataStream();
+
     return true;
   }
 
@@ -60,5 +65,14 @@ class MQTTClientRepository {
   void disconnect() {
     print("disconnectting client ...");
     client.disconnect();
+  }
+
+  void getDataStream() {
+    this.client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      final recMess = c[0].payload as MqttPublishMessage;
+      final pt =
+          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+      messages.add(pt);
+    });
   }
 }
