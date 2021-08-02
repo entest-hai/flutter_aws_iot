@@ -59,9 +59,6 @@ class _MQTTClientState extends State<MQTTClient> {
                 if (state is MQTTConnecting) CircularProgressIndicator(),
                 if (state is MQTTConnected)
                   listMessages(context.read<MQTTClientRepository>().messages)
-                // if (state is MQTTConnected)
-                //   streamMessages(
-                //       context.read<MQTTClientRepository>().client.updates!)
               ],
             );
           },
