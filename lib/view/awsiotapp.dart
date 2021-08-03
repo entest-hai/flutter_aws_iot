@@ -37,6 +37,7 @@ class MQTTClient extends StatefulWidget {
 }
 
 class _MQTTClientState extends State<MQTTClient> {
+  double _currentSliderValue = 20;
   TextEditingController idTextController = TextEditingController();
   TextEditingController messageTextController = TextEditingController();
 
@@ -58,9 +59,14 @@ class _MQTTClientState extends State<MQTTClient> {
               children: [
                 connectButton(),
                 if (state is MQTTConnected) publishButton(),
+                publishSlider(),
                 if (state is MQTTConnecting) CircularProgressIndicator(),
                 if (state is MQTTConnected)
-                  listMessages(context.read<MQTTClientRepository>().messages)
+                  listMessages(context
+                      .read<MQTTClientRepository>()
+                      .messages
+                      .reversed
+                      .toList())
               ],
             );
           },
@@ -91,6 +97,7 @@ class _MQTTClientState extends State<MQTTClient> {
   Widget listMessages(List<String> messages) {
     return Expanded(
       child: ListView.builder(
+        reverse: true,
         itemCount: messages.length,
         itemBuilder: (context, index) {
           return ListTile(title: Text(messages[index]));
@@ -117,10 +124,31 @@ class _MQTTClientState extends State<MQTTClient> {
     );
   }
 
+  Widget publishSlider() {
+    return BlocBuilder<MQTTBloc, MQTTState>(builder: (context, state) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: Slider(
+            value: _currentSliderValue,
+            min: 0,
+            max: 100,
+            label: _currentSliderValue.round().toString(),
+            onChanged: (double value) {
+              setState(() {
+                _currentSliderValue = value;
+                context.read<MQTTClientRepository>().publishMessage(
+                    "slider value ${_currentSliderValue.round().toString()}");
+              });
+              print(value);
+            }),
+      );
+    });
+  }
+
   Widget publishButton() {
     return BlocBuilder<MQTTBloc, MQTTState>(builder: (context, state) {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 23, vertical: 8),
         child: TextFormField(
           controller: messageTextController,
           decoration: InputDecoration(
@@ -147,7 +175,7 @@ class _MQTTClientState extends State<MQTTClient> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 23, vertical: 8),
               child: TextFormField(
                   enabled: state is MQTTDisconnected,
                   controller: idTextController,
