@@ -66,6 +66,7 @@ class MQTTClientRepository {
 
   void disconnect() {
     print("disconnectting client ...");
+    this.messages.clear();
     client.disconnect();
   }
 

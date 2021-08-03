@@ -93,7 +93,7 @@ class _MQTTClientState extends State<MQTTClient> {
       child: ListView.builder(
         itemCount: messages.length,
         itemBuilder: (context, index) {
-          return Text(messages[index]);
+          return ListTile(title: Text(messages[index]));
         },
       ),
     );
