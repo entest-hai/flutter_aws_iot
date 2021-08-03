@@ -4,6 +4,8 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 class MQTTClientRepository {
+  final builder = MqttClientPayloadBuilder();
+
   final MqttServerClient client = MqttServerClient(
       'a209xbcpyxq5au-ats.iot.ap-southeast-1.amazonaws.com', '');
 
@@ -74,5 +76,11 @@ class MQTTClientRepository {
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
       messages.add(pt);
     });
+  }
+
+  void publishMessage(String message) {
+    builder.clear();
+    builder.addString(message);
+    this.client.publishMessage("slider", MqttQos.atLeastOnce, builder.payload!);
   }
 }

@@ -38,6 +38,7 @@ class MQTTClient extends StatefulWidget {
 
 class _MQTTClientState extends State<MQTTClient> {
   TextEditingController idTextController = TextEditingController();
+  TextEditingController messageTextController = TextEditingController();
 
   @override
   void dispose() {
@@ -56,6 +57,7 @@ class _MQTTClientState extends State<MQTTClient> {
             return Column(
               children: [
                 connectButton(),
+                if (state is MQTTConnected) publishButton(),
                 if (state is MQTTConnecting) CircularProgressIndicator(),
                 if (state is MQTTConnected)
                   listMessages(context.read<MQTTClientRepository>().messages)
@@ -113,6 +115,29 @@ class _MQTTClientState extends State<MQTTClient> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
     );
+  }
+
+  Widget publishButton() {
+    return BlocBuilder<MQTTBloc, MQTTState>(builder: (context, state) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: TextFormField(
+          controller: messageTextController,
+          decoration: InputDecoration(
+              border: UnderlineInputBorder(),
+              labelText: "Publish message",
+              labelStyle: TextStyle(fontSize: 10),
+              suffixIcon: IconButton(
+                icon: Icon(Icons.subdirectory_arrow_left),
+                onPressed: () {
+                  context
+                      .read<MQTTClientRepository>()
+                      .publishMessage(messageTextController.text.trim());
+                },
+              )),
+        ),
+      );
+    });
   }
 
   Widget connectButton() {

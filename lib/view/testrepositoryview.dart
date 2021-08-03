@@ -25,10 +25,9 @@ class RepositoryApp extends StatelessWidget {
                   title: Text("Repository"),
                 ),
                 body: ListView.builder(
-                  itemCount: context.read<MessageRepository>().messages.length,
+                  itemCount: state.messages.length,
                   itemBuilder: (context, index) {
-                    final List<String> messages =
-                        context.read<MessageRepository>().messages;
+                    final List<String> messages = state.messages;
                     return ListTile(
                       title: Text("${messages[index]} $index"),
                     );
@@ -55,17 +54,20 @@ class MessageRepository {
 
 class AddEvent {}
 
-class AddState {}
+class AddState {
+  List<String> messages;
+  AddState({required this.messages});
+}
 
 class AddBloc extends Bloc<AddEvent, AddState> {
   final MessageRepository repository;
-  AddBloc({required this.repository}) : super(AddState());
+  AddBloc({required this.repository}) : super(AddState(messages: []));
 
   @override
   Stream<AddState> mapEventToState(AddEvent event) async* {
     if (event is AddEvent) {
       this.repository.messages.add("new message");
-      yield AddState();
+      yield AddState(messages: this.repository.messages);
     }
   }
 }

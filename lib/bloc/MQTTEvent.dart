@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 abstract class MQTTEvent {}
 
-// MQTT connect
 class MQTTConnect extends MQTTEvent {
   final String clientId;
   final BuildContext context;
@@ -12,7 +11,11 @@ class MQTTConnect extends MQTTEvent {
   });
 }
 
-// MQTT disconnect
+class MQTTPublish extends MQTTEvent {
+  final String message;
+  MQTTPublish({required this.message});
+}
+
 class MQTTDisconnect extends MQTTEvent {
   final String clientId;
   MQTTDisconnect({required this.clientId});
