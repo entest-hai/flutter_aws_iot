@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_aws_iot/bloc/MQTTBloc.dart';
 import 'package:flutter_aws_iot/bloc/MQTTEvent.dart';
 import 'package:flutter_aws_iot/bloc/MQTTState.dart';
+import 'package:flutter_aws_iot/repository/EcgRepository.dart';
 import 'package:flutter_aws_iot/repository/MQTTRepository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -15,12 +16,17 @@ class AWSIoTApp extends StatelessWidget {
           RepositoryProvider(
             create: (context) => MQTTClientRepository(),
           ),
+          RepositoryProvider(
+            create: (context) => HeartRateRepository(),
+          )
         ],
         child: MultiBlocProvider(
           providers: [
             BlocProvider(
-                create: (context) =>
-                    MQTTBloc(repository: context.read<MQTTClientRepository>()))
+                create: (context) => MQTTBloc(
+                    repository: context.read<MQTTClientRepository>(),
+                    heartRateRepository: context.read<HeartRateRepository>()
+                      ..readHeartRateFile("assets/mheartrate.txt")))
           ],
           child: MQTTClient(),
         ),
@@ -58,8 +64,9 @@ class _MQTTClientState extends State<MQTTClient> {
             return Column(
               children: [
                 connectButton(),
-                if (state is MQTTConnected) publishButton(),
-                publishSlider(),
+                // if (state is MQTTConnected) publishButton(),
+                // publishSlider(),
+                if (state is MQTTConnected) publishEcg(),
                 if (state is MQTTConnecting) CircularProgressIndicator(),
                 if (state is MQTTConnected)
                   listMessages(context
@@ -122,6 +129,34 @@ class _MQTTClientState extends State<MQTTClient> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
     );
+  }
+
+  Widget publishEcg() {
+    return BlocBuilder<MQTTBloc, MQTTState>(builder: (context, state) {
+      return Padding(
+        padding: const EdgeInsets.only(right: 23),
+        child: Row(
+          children: [
+            Spacer(),
+            TextButton(
+                onPressed: () async {
+                  for (var i = 0; i < 30; i++) {
+                    final message = context
+                        .read<HeartRateRepository>()
+                        .ecg
+                        .sublist(i * 10, i * 10 + 10)
+                        .toString();
+                    context
+                        .read<MQTTClientRepository>()
+                        .publishMessage(message);
+                    await Future.delayed(Duration(seconds: 1));
+                  }
+                },
+                child: Text("Publish"))
+          ],
+        ),
+      );
+    });
   }
 
   Widget publishSlider() {

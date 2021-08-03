@@ -53,6 +53,7 @@ flutter:
     - assets/certs/90dd0acc83-certificate.pem.crt 
     - assets/certs/90dd0acc83-private.pem.key
     - assets/certs/90dd0acc83-public.pem.key
+    - assets/mheartrate.txt
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

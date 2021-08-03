@@ -1,4 +1,5 @@
 import 'package:flutter_aws_iot/bloc/MQTTEvent.dart';
+import 'package:flutter_aws_iot/repository/EcgRepository.dart';
 import 'package:flutter_aws_iot/repository/MQTTRepository.dart';
 import 'package:flutter_aws_iot/bloc/MQTTState.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +9,9 @@ class MQTTBloc extends Bloc<MQTTEvent, MQTTState> {
   List<String> currentMessages = [""];
 
   final MQTTClientRepository repository;
-  MQTTBloc({required this.repository}) : super(MQTTDisconnected());
+  final HeartRateRepository heartRateRepository;
+  MQTTBloc({required this.repository, required this.heartRateRepository})
+      : super(MQTTDisconnected());
 
   @override
   Stream<MQTTState> mapEventToState(MQTTEvent event) async* {
