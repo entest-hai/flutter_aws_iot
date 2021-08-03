@@ -127,8 +127,8 @@ class _MQTTClientState extends State<MQTTClient> {
               border: UnderlineInputBorder(),
               labelText: "Publish message",
               labelStyle: TextStyle(fontSize: 10),
-              suffixIcon: IconButton(
-                icon: Icon(Icons.subdirectory_arrow_left),
+              suffixIcon: TextButton(
+                child: Text("Publish"),
                 onPressed: () {
                   context
                       .read<MQTTClientRepository>()
@@ -155,12 +155,12 @@ class _MQTTClientState extends State<MQTTClient> {
                       border: UnderlineInputBorder(),
                       labelText: 'MQTT Client Id',
                       labelStyle: TextStyle(fontSize: 10),
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.subdirectory_arrow_left),
+                      suffixIcon: TextButton(
                         onPressed: () {
                           context.read<MQTTBloc>().add(MQTTConnect(
                               clientId: "testDevice", context: context));
                         },
+                        child: Text("Connect"),
                       ))),
             )
           ],
