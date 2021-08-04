@@ -35,7 +35,7 @@ class RepositoryApp extends StatelessWidget {
                 ),
                 floatingActionButton: FloatingActionButton(
                   onPressed: () {
-                    context.read<AddBloc>().add(AddEvent());
+                    BlocProvider.of<AddBloc>(context).add(AddEvent());
                   },
                   child: Icon(Icons.add),
                 ),
