@@ -2,7 +2,7 @@
 
 A new Flutter project.
 
-![Screen Recording 2021-08-03 at 10 47 20](https://user-images.githubusercontent.com/20411077/127956278-d6a69637-d1e4-4fda-bbc2-957486673e38.gif)
+![ezgif com-video-to-gif](https://user-images.githubusercontent.com/20411077/127966528-e095f3ff-4cf7-4930-852d-d222f618e950.gif)
 
 
 ## Getting Started
