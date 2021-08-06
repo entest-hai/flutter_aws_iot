@@ -64,8 +64,8 @@ class _MQTTClientState extends State<MQTTClient> {
             return Column(
               children: [
                 connectButton(),
-                // if (state is MQTTConnected) publishButton(),
-                // publishSlider(),
+                if (state is MQTTConnected) publishButton(),
+                if (state is MQTTConnected) publishSlider(),
                 if (state is MQTTConnected) publishEcg(),
                 if (state is MQTTConnecting) CircularProgressIndicator(),
                 if (state is MQTTConnected)
@@ -120,7 +120,8 @@ class _MQTTClientState extends State<MQTTClient> {
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
       onPressed: () {
-        context.read<MQTTBloc>().add(MQTTDisconnect(clientId: "testDevice"));
+        BlocProvider.of<MQTTBloc>(context)
+            .add(MQTTDisconnect(clientId: "testDevice"));
       },
       style: TextButton.styleFrom(
           backgroundColor: Colors.blue,
@@ -220,7 +221,7 @@ class _MQTTClientState extends State<MQTTClient> {
                       labelStyle: TextStyle(fontSize: 10),
                       suffixIcon: TextButton(
                         onPressed: () {
-                          context.read<MQTTBloc>().add(MQTTConnect(
+                          BlocProvider.of<MQTTBloc>(context).add(MQTTConnect(
                               clientId: "testDevice", context: context));
                         },
                         child: Text("Connect"),

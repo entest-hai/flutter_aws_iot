@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_aws_iot/view/awsiotapp.dart';
-import 'package:flutter_aws_iot/view/testrepositoryview.dart';
-import 'package:flutter_aws_iot/view/teststreambuilderview.dart';
+import 'package:flutter_aws_iot/view/awsiotview.dart';
 
 void main() {
-  runApp(RepositoryApp());
+  runApp(AWSIoTApp());
 }
